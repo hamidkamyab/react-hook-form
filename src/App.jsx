@@ -2,6 +2,7 @@
 import { useFieldArray, useForm } from 'react-hook-form'
 import './App.css'
 import { DevTool } from '@hookform/devtools';
+import { useEffect } from 'react';
 
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
   const methods = useForm({
     defaultValues:defaultVal
   })
-  const {register, control, handleSubmit, formState:{errors,isSubmitting},watch,setValue } = methods;
+  const {register, control, handleSubmit,reset , formState:{errors,isSubmitting, isSubmitSuccessful},watch,setValue } = methods;
   const watchUserName = watch("username")
   const {fields,append,remove} = useFieldArray({
     name: "friends",
@@ -41,11 +42,24 @@ function App() {
       shouldTouch:true
     })
   }
+
+  const handeResetValue = ()=>{
+    reset()
+  }
+
   const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
   const onSubmit = async(data) =>{
     await delay(2000);
     console.log("Submit form  ====>", data);
   }
+
+  useEffect(() => {
+     if(isSubmitSuccessful)
+      reset()
+      
+   
+  }, [isSubmitSuccessful])
+  
 
   return (
     <>
@@ -171,6 +185,7 @@ function App() {
           </button>
        
           <button type='button' onClick={handleSetValue} className='bg-blue-600 text-white mx-2' >set value</button>
+          <button type='button' onClick={handeResetValue} className='bg-rose-600 text-white mx-2' >Reset value</button>
         </div>
       </form>
       <DevTool control={control}/>
