@@ -76,7 +76,13 @@ function App() {
         <div className='flex flex-col items-end gap-1'>
           <div className='flex gap-1 justify-end items-center'>
            <label className='text-start' htmlFor="email">email</label>
-            <input disabled={isSubmitting} type="email" id='email' className="w-52 border border-slate-300 p-1 rounded-md" {...register("email",{required:"ایمیل الزامیست",pattern:{value:/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,message:"فرمت ایمیل صحیح نمی باشد"}})} />
+            <input disabled={isSubmitting} type="email" id='email' className="w-52 border border-slate-300 p-1 rounded-md" {...register("email",{required:"ایمیل الزامیست",pattern:{value:/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,message:"فرمت ایمیل صحیح نمی باشد"},validate:{
+              emailAvailable: async (fieldVal)=>{
+                const response = await fetch(`https://jsonplaceholder.typicode.com/users?email=${fieldVal}`)
+                const data = await response.json();
+                return data.length === 0 || "ایمیل تکراری است!" 
+              }
+            }})} />
           </div>
           <small className='text-rose-500 font-medium text-[11px]'>{errors.email?.message}</small>
 
